@@ -1,28 +1,27 @@
 import numpy as np
 from numpy.typing import NDArray
-import math
 
 
 class Solution:
 
-    def softmax(self, z: NDArray[np.float64]) -> NDArray[np.float64]:
-        # z is a 1D NumPy array of logits
-        # Hint: subtract max(z) for numerical stability before computing exp
-        # return np.round(your_answer, 4)
-        total_distrubution = 0
-        max_z=max(z)
-    
-        for i in range(len(z)):
-            total_distrubution += math.exp(z[i]-max_z)
-        ans = []
-        for i in range(len(z)):
-            ith_distrubution = round(math.exp(z[i]-max_z)/total_distrubution,4)
-            ans.append(ith_distrubution)
-
-        return ans
-        
+    def binary_cross_entropy(self, y_true: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
+        # y_true: true labels (0 or 1)
+        # y_pred: predicted probabilities
+        # Hint: add a small epsilon (1e-7) to y_pred to avoid log(0)
+        # return round(your_answer, 4)
+        epsilon = 1e-7
+        y_pred = np.clip(y_pred, epsilon,1-epsilon)
+        bcp = -np.mean(y_true*np.log(y_pred)+(1-y_true)*np.log(1-y_pred))
+        return float(round(bcp,4))
 
 
+    def categorical_cross_entropy(self, y_true: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
+        # y_true: one-hot encoded true labels (shape: n_samples x n_classes)
+        # y_pred: predicted probabilities (shape: n_samples x n_classes)
+        # Hint: add a small epsilon (1e-7) to y_pred to avoid log(0)
+        # return round(your_answer, 4)
+        epsilon = 1e-7
+        y_pred= np.clip(y_pred,epsilon,1-epsilon)
 
-
-
+        cce = -np.mean(np.sum(y_true*np.log(y_pred),axis =1))
+        return float(round(cce,4))
